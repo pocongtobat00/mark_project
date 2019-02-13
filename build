@@ -8,13 +8,16 @@ export ARCH="arm64"
 export CLANG_DIR="/root/kernel/17"
 export CC="${CLANG_DIR}/bin/clang"
 export LINKER="lld"
-export compiler_name="Gang Kapak Compiler"
+export compiler_name="Gang Kapak Clang 17 Compiler"
+export chat_id="-1001551521202"
+export TOKEN="5452672785:AAFh0ke8wGsfvk1qzEnZKi3fJ_eZvpOx1Rc"
 export DTSI_DIR=$KERNEL_DIR/arch/arm64/boot/dts/vendor/qcom
 export APOLLO=$DTSI_DIR/dsi-panel-j3s-37-02-0a-dsc-video.dtsi
 export ALIOTH=$DTSI_DIR/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
 export MUNCH=$DTSI_DIR/dsi-panel-l11r-38-08-0a-dsc-cmd.dtsi
 KERNELVER="$(make kernelversion)"
 DATE_CLOCK="$(date +'%H%M-%d%m%Y')"
+TANGGAL=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
 
 aosp_build() {
 	sed -i 's/qcom,mdss-pan-physical-width-dimension = <695>;/qcom,mdss-pan-physical-width-dimension = <70>;/g' $APOLLO
@@ -38,27 +41,27 @@ build_non_ksu() {
 	sed -i 's/CONFIG_KSU=y/# CONFIG_KSU is not set/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/CONFIG_OVERLAY_FS_REDIRECT_DIR=y/# CONFIG_OVERLAY_FS_REDIRECT_DIR is not set/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/CONFIG_OVERLAY_FS_INDEX=y/# CONFIG_OVERLAY_FS_INDEX is not set/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
-	ZIPNAME=$KERNELVER-$DEVICE-${BUILD_TYPE}${VARIANT}Oxygen+-$DATE_CLOCK.zip
+	ZIPNAME=Mark-Kernel.zip
 }
 
 build_ksu() {
 	sed -i 's/# CONFIG_KSU is not set/CONFIG_KSU=y/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/# CONFIG_OVERLAY_FS_REDIRECT_DIR is not set/CONFIG_OVERLAY_FS_REDIRECT_DIR=y/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/# CONFIG_OVERLAY_FS_INDEX is not set/CONFIG_OVERLAY_FS_INDEX=y/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
-	ZIPNAME=$KERNELVER-$DEVICE-${BUILD_TYPE}${VARIANT}Oxygen+-KernelSU-$DATE_CLOCK.zip
+	ZIPNAME=Mark_KSU-Kernel.zip
 }
 
 build_oc() {
-	mkdir $ANYKERNEL_DIR/oxygen+/backup
-	mv arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi $ANYKERNEL_DIR/oxygen+/backup/
-	cp $ANYKERNEL_DIR/oxygen+/kona-v2-gpu.dtsi arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi
+	mkdir $ANYKERNEL_DIR/Mark/backup
+	mv arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi $ANYKERNEL_DIR/Mark/backup/
+	cp $ANYKERNEL_DIR/Mark/kona-v2-gpu.dtsi arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi
 	chmod 755 arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi
 }
 
 restore_gpu_dtsi() {
-	mv $ANYKERNEL_DIR/oxygen+/backup/kona-v2-gpu.dtsi arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi > /dev/null 2>&1 
+	mv $ANYKERNEL_DIR/Mark/backup/kona-v2-gpu.dtsi arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi > /dev/null 2>&1 
 	chmod 755 arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi
-	rm -rf $ANYKERNEL_DIR/oxygen+/backup
+	rm -rf $ANYKERNEL_DIR/mark/backup
 }
 
 zipkernel() {
@@ -73,15 +76,15 @@ zipkernel() {
 		if [[ $DEVICE == apollo ]]; then
 			if [[ ! -d $ANYKERNEL_DIR/ramdisk ]]; then
 				mkdir $ANYKERNEL_DIR/ramdisk
-				cp -r $ANYKERNEL_DIR/oxygen+/overlay.d $ANYKERNEL_DIR/ramdisk/
+				cp -r $ANYKERNEL_DIR/Mark/overlay.d $ANYKERNEL_DIR/ramdisk/
 			fi
-			cp $ANYKERNEL_DIR/oxygen+/apollo $ANYKERNEL_DIR/anykernel.sh
+			cp $ANYKERNEL_DIR/Mark/apollo $ANYKERNEL_DIR/anykernel.sh
 		elif [[ $DEVICE == alioth ]]; then
 			rm -rf $ANYKERNEL_DIR/ramdisk
-			cp $ANYKERNEL_DIR/oxygen+/alioth $ANYKERNEL_DIR/anykernel.sh
+			cp $ANYKERNEL_DIR/Mark/alioth $ANYKERNEL_DIR/anykernel.sh
 		elif [[ $DEVICE == munch ]]; then
 			rm -rf $ANYKERNEL_DIR/ramdisk
-			cp $ANYKERNEL_DIR/oxygen+/munch $ANYKERNEL_DIR/anykernel.sh
+			cp $ANYKERNEL_DIR/Mark/munch $ANYKERNEL_DIR/anykernel.sh
 		fi
 		zip -r9 $ZIPNAME META-INF ramdisk tools anykernel.sh banner Image.gz dtb dtbo.img
 		mv $ZIPNAME $KERNEL_DIR/
@@ -99,19 +102,33 @@ zipkernel() {
 		echo ""
 		BUILD_END=$(date +"%s")
 		DIFF=$(($BUILD_END - $BUILD_START))
+	        curl -v -F chat_id="${chat_id}"  \
+                            -F document=@/root/kernel/ven/Mark_Kernel.zip \
+                             https://api.telegram.org/bot${TOKEN}/sendDocument    
 		echo -e "Build completed in '$(($DIFF / 60))' minute(s) and '$(($DIFF % 60))' seconds"
 	else
 		echo " Kernel build failed! abort zipping..."
 	fi
-	rm -rf $KERNEL_DIR/out/
 }
 
 build() {
 	DEFCONFIG=vendor/${DEVICE}_defconfig
 	echo "cleaning..."
-	rm -rf $KERNEL_DIR/out/
+	rm *.zip
 	mkdir -p out
 	clear
+      # Post to CI channel
+      curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d text="Buckle up Mark  kernel build has started" -d chat_id=${chat_id} -d parse_mode=HTML
+      curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d text="Branch: <code>$(git rev-parse --abbrev-ref HEAD)</code>
+      Kernel Version : <code>'Mark Kernel One'</code>
+      Compiler Used : <code>'Gang Kapak 17'</code>
+      Latest Commit: <code>$(git log --pretty=format:'%h : %s' -1)</code>
+      Starting..." -d chat_id=${chat_id} -d parse_mode=HTML
+      
+      # Export shits
+      export KBUILD_BUILD_USER=Pocongtobat
+      export KBUILD_BUILD_HOST=WartegCI
+      
 	BUILD_START=$(date +"%s")
 	export USE_CCACHE=1
 	export CCACHE_EXEC=/usr/bin/ccache
@@ -221,4 +238,5 @@ while true; do
         echo "Please answer 1, 2 or 3.";;
     esac
 done
+
 
