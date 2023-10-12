@@ -140,3 +140,12 @@ kernel/configs/android-*.cfg
 # Tech package directories
 #techpack/
 out/
+KernelSU/
+*.zip
+build
+b
+be
+bc
+c
+d
+

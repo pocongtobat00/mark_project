@@ -8,7 +8,7 @@ export ARCH="arm64"
 export CLANG_DIR="/root/kernel/17"
 export CC="${CLANG_DIR}/bin/clang"
 export LINKER="lld"
-export compiler_name="Gang Kapak Compiler"
+export compiler_name="Oxygen"
 export DTSI_DIR=$KERNEL_DIR/arch/arm64/boot/dts/vendor/qcom
 export APOLLO=$DTSI_DIR/dsi-panel-j3s-37-02-0a-dsc-video.dtsi
 export ALIOTH=$DTSI_DIR/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
@@ -38,14 +38,14 @@ build_non_ksu() {
 	sed -i 's/CONFIG_KSU=y/# CONFIG_KSU is not set/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/CONFIG_OVERLAY_FS_REDIRECT_DIR=y/# CONFIG_OVERLAY_FS_REDIRECT_DIR is not set/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/CONFIG_OVERLAY_FS_INDEX=y/# CONFIG_OVERLAY_FS_INDEX is not set/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
-	ZIPNAME=$KERNELVER-$DEVICE-${BUILD_TYPE}${VARIANT}Oxygen+-$DATE_CLOCK.zip
+	ZIPNAME=$KERNELVER-$DEVICE-${BUILD_TYPE}${VARIANT}Mark-$DATE_CLOCK.zip
 }
 
 build_ksu() {
 	sed -i 's/# CONFIG_KSU is not set/CONFIG_KSU=y/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/# CONFIG_OVERLAY_FS_REDIRECT_DIR is not set/CONFIG_OVERLAY_FS_REDIRECT_DIR=y/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/# CONFIG_OVERLAY_FS_INDEX is not set/CONFIG_OVERLAY_FS_INDEX=y/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
-	ZIPNAME=$KERNELVER-$DEVICE-${BUILD_TYPE}${VARIANT}Oxygen+-KernelSU-$DATE_CLOCK.zip
+	ZIPNAME=$KERNELVER-$DEVICE-${BUILD_TYPE}${VARIANT}Mark-KernelSU-$DATE_CLOCK.zip
 }
 
 build_oc() {
@@ -103,13 +103,11 @@ zipkernel() {
 	else
 		echo " Kernel build failed! abort zipping..."
 	fi
-	rm -rf $KERNEL_DIR/out/
 }
 
 build() {
 	DEFCONFIG=vendor/${DEVICE}_defconfig
 	echo "cleaning..."
-	rm -rf $KERNEL_DIR/out/
 	mkdir -p out
 	clear
 	BUILD_START=$(date +"%s")

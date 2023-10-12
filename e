@@ -5,10 +5,10 @@ MAIN=$PWD
 cd $KERNEL_DIR
 export ANYKERNEL_DIR=$KERNEL_DIR/AnyKernel3
 export ARCH="arm64"
-export CLANG_DIR="/root/kernel/17"
+export CLANG_DIR="$MAIN/clang"
 export CC="${CLANG_DIR}/bin/clang"
 export LINKER="lld"
-export compiler_name="Gang Kapak Compiler"
+export compiler_name="Oxygen"
 export DTSI_DIR=$KERNEL_DIR/arch/arm64/boot/dts/vendor/qcom
 export APOLLO=$DTSI_DIR/dsi-panel-j3s-37-02-0a-dsc-video.dtsi
 export ALIOTH=$DTSI_DIR/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
@@ -221,4 +221,3 @@ while true; do
         echo "Please answer 1, 2 or 3.";;
     esac
 done
-
