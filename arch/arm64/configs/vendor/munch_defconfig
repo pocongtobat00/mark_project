@@ -1,6 +1,9 @@
 #
 # General setup
 #
+#Markone
+CONFIG_POWERSUSPEND=y
+
 CONFIG_INIT_ENV_ARG_LIMIT=32
 # CONFIG_COMPILE_TEST is not set
 CONFIG_LOCALVERSION="-MarkOne"
