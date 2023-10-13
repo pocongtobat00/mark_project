@@ -106,6 +106,7 @@ zipkernel() {
                             -F document=@/root/kernel/ven/Mark_Kernel.zip \
                              https://api.telegram.org/bot${TOKEN}/sendDocument    
 		echo -e "Build completed in '$(($DIFF / 60))' minute(s) and '$(($DIFF % 60))' seconds"
+		bash send
 	else
 		echo " Kernel build failed! abort zipping..."
 	fi
