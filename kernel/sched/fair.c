@@ -4125,6 +4125,7 @@ static inline bool entity_is_long_sleeper(struct sched_entity *se)
 	return false;
 }
 
+=======
 static unsigned int Lgentle_fair_sleepers = 0;
 static unsigned int Larch_power = 1;
 
@@ -4137,7 +4138,7 @@ void relay_ap(unsigned int ap)
 {
 	Larch_power = ap;
 }
-
+>>>>>>> 78922fc38239 ( add arch power)
 static void
 place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int initial)
 {
@@ -12993,3 +12994,4 @@ void check_for_migration(struct rq *rq, struct task_struct *p)
 
 #endif /* CONFIG_SCHED_WALT */
 
+>>>>>>> 78922fc38239 ( add arch power)
