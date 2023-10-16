@@ -16,9 +16,9 @@
  * Use arch dependent cpu capacity functions
  */
 
-SCHED_FEAT(ARCH_CAPACITY, true)
+#define SCHED_FEAT_ARCH_CAPACITY 1
 
-SCHED_FEAT(ARCH_POWER, true)
+#define SCHED_FEAT_ARCH_POWER 1
 
 /*
  * Prefer to schedule the task we woke last (assuming it failed

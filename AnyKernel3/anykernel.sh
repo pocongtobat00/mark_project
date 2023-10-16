@@ -4,7 +4,7 @@
 ## AnyKernel setup
 # global properties
 properties() { '
-kernel.string=MarkOne by Pocongtobat
+kernel.string=Oxygen+ by Danda
 do.devicecheck=1
 do.modules=0
 do.systemless=1
