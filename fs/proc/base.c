@@ -1178,6 +1178,14 @@ err_unlock:
 		} else if (oom_adj >= 700) {
 			task_comm_main = 1;
 			strncpy(task_package, "id.GoogleCamera", sizeof(task_package));
+                  strncpy(task_package, "eaurora.snapcam", sizeof(task_package));
+                  strncpy(task_package, "android.gallery", sizeof(task_package));
+                  strncpy(task_package, "android.settings", sizeof(task_package));
+                  strncpy(task_package, "mnirom.omnijaws", sizeof(task_package));
+                  strncpy(task_package, "android.MGC", sizeof(task_package));
+                  strncpy(task_package, "google.android.apps.safetyhub", sizeof(task_package));
+                  strncpy(task_package, "android.stk", sizeof(task_package));
+                  strncpy(task_package, "google.android.apps.photos", sizeof(task_package));
 		} else
 			task_comm_main = 0;
 
