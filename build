@@ -4,11 +4,12 @@ cd ..
 MAIN=$PWD
 cd $KERNEL_DIR
 export ANYKERNEL_DIR=$KERNEL_DIR/AnyKernel3
+export send="/root/kernel/ven/send"
 export ARCH="arm64"
-export CLANG_DIR="/root/kernel/17"
+export CLANG_DIR="/root/kernel/18"
 export CC="${CLANG_DIR}/bin/clang"
 export LINKER="lld"
-export compiler_name="Gang Kapak Clang 17 Compiler"
+export compiler_name="Gang Kapak Clang 18 Compiler"
 export chat_id="-1001551521202"
 export TOKEN="5452672785:AAFh0ke8wGsfvk1qzEnZKi3fJ_eZvpOx1Rc"
 export DTSI_DIR=$KERNEL_DIR/arch/arm64/boot/dts/vendor/qcom
@@ -17,7 +18,9 @@ export ALIOTH=$DTSI_DIR/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
 export MUNCH=$DTSI_DIR/dsi-panel-l11r-38-08-0a-dsc-cmd.dtsi
 KERNELVER="$(make kernelversion)"
 DATE_CLOCK="$(date +'%H%M-%d%m%Y')"
-TANGGAL=$(TZ=Asia/Jakarta date "+%Y%m%d-%H%M")
+export TZ=Asia/Jakarta
+export VERSION=One
+TANGGAL=${VERSION}-$(date +"%d%m%H%M")
 
 aosp_build() {
 	sed -i 's/qcom,mdss-pan-physical-width-dimension = <695>;/qcom,mdss-pan-physical-width-dimension = <70>;/g' $APOLLO
@@ -41,7 +44,7 @@ build_non_ksu() {
 	sed -i 's/CONFIG_KSU=y/# CONFIG_KSU is not set/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/CONFIG_OVERLAY_FS_REDIRECT_DIR=y/# CONFIG_OVERLAY_FS_REDIRECT_DIR is not set/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
 	sed -i 's/CONFIG_OVERLAY_FS_INDEX=y/# CONFIG_OVERLAY_FS_INDEX is not set/g' $KERNEL_DIR/arch/arm64/configs/vendor/${DEVICE}_defconfig
-	ZIPNAME=Mark-Kernel.zip
+	ZIPNAME=Mark-${TANGGAL}.zip
 }
 
 build_ksu() {
@@ -89,7 +92,8 @@ zipkernel() {
 		zip -r9 $ZIPNAME META-INF ramdisk tools anykernel.sh banner Image.gz dtb dtbo.img
 		mv $ZIPNAME $KERNEL_DIR/
 		echo ""
-
+		echo "send zip"
+		bash $KERNEL_DIR/send
 		echo "Cleaning AnyKernel3 dir"
 		echo ""
 		rm -rf $ANYKERNEL_DIR/*.zip
@@ -102,9 +106,6 @@ zipkernel() {
 		echo ""
 		BUILD_END=$(date +"%s")
 		DIFF=$(($BUILD_END - $BUILD_START))
-	        curl -v -F chat_id="${chat_id}"  \
-                            -F document=@/root/kernel/ven/Mark_Kernel.zip \
-                             https://api.telegram.org/bot${TOKEN}/sendDocument    
 		echo -e "Build completed in '$(($DIFF / 60))' minute(s) and '$(($DIFF % 60))' seconds"
 	else
 		echo " Kernel build failed! abort zipping..."
@@ -118,12 +119,12 @@ build() {
 	mkdir -p out
 	clear
       # Post to CI channel
-      curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d text="Buckle up Mark  kernel build has started" -d chat_id=${chat_id} -d parse_mode=HTML
-      curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d text="Branch: <code>$(git rev-parse --abbrev-ref HEAD)</code>
-      Kernel Version : <code>'Mark Kernel One'</code>
-      Compiler Used : <code>'Gang Kapak 17'</code>
-      Latest Commit: <code>$(git log --pretty=format:'%h : %s' -1)</code>
-      Starting..." -d chat_id=${chat_id} -d parse_mode=HTML
+      # curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d text="Buckle up Mark  kernel build has started" -d chat_id=${chat_id} -d parse_mode=HTML
+      # curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d text="Branch: <code>$(git rev-parse --abbrev-ref HEAD)</code>
+      # Kernel Version : <code>'Mark Kernel One'</code>
+      # Compiler Used : <code>'Gang Kapak 17'</code>
+      # Latest Commit: <code>$(git log --pretty=format:'%h : %s' -1)</code>
+      # Starting..." -d chat_id=${chat_id} -d parse_mode=HTML
       
       # Export shits
       export KBUILD_BUILD_USER=Pocongtobat
@@ -187,7 +188,7 @@ choose_build() {
 	    echo " "
 	    echo "1. Build kernel without KernelSU"
 	    echo "2. Build kernel with KernelSU"
-	    read -p "" choose
+	    choose=1
 	    case $choose in
 		1 ) 
 		build_non_ksu
@@ -220,7 +221,7 @@ while true; do
     echo "(1) MI 10T/Pro (apollo)"
     echo "(2) POCO F3 (alioth)"
     echo "(3) POCO F4 (munch)"
-    read -p "" choose
+    choose=3
     case $choose in
         1 ) 
         DEVICE=apollo
@@ -238,5 +239,7 @@ while true; do
         echo "Please answer 1, 2 or 3.";;
     esac
 done
+
+
 
 
