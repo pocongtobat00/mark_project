@@ -7,7 +7,7 @@ jobs:
    steps:
       - run:
           command: |
-           pacman -Syu --needed --noconfirm pacman-key --init  wget base-devel xmlto inetutils bc cpio python-sphinx python-sphinx_rtd_theme graphviz imagemagick git python3 python zip xxd
+           pacman -Syu --needed --noconfirm  wget base-devel xmlto inetutils bc cpio python-sphinx python-sphinx_rtd_theme graphviz imagemagick git python3 python zip xxd
            git clone https://github.com/pocongtobat00/mark_project.git --depth 1 .
            git config --global user.name "pocongtobat00"
            git config --global user.email "pocongtobat00@gmail.com"
